@@ -1,0 +1,428 @@
+---
+title: "BIOCLIM"
+author: "Olson-Manning"
+---
+
+```{r}
+# Install and load required packages (only the ones you need)
+# install.packages(c("geodata", "terra", "dismo", "ggplot2", "maps"))
+# install.packages("usdm")  # if not already installed
+library(geodata)
+library(terra)
+library(dismo)
+library(ggplot2)
+library(ggnewscale)
+library(maps)
+library(raster)
+library(dplyr)
+library(usdm)
+library(terra)
+
+
+# =============================
+# Load your GPS occurrence data
+# =============================
+occ1 <- read.csv("Asclepias_syriaca_GBIF.csv")  # Must include 'longitude' and 'latitude'
+occ2 <- read.csv("Asclepias_speciosa_GBIF.csv")  # Must include 'longitude' and 'latitude'
+occ3 <- read.csv("confirmed_hybrids.csv")
+
+# Optional: Check column names and rename if necessary
+# names(occ)
+occ1 <- rename(occ1, longitude = longitude, latitude = latitude)  # if needed
+occ2 <- rename(occ2, longitude = longitude, latitude = latitude)  # if needed
+
+all_occ <- rbind(occ1,occ2)
+
+# =============================
+# Map the distribution of occurrences
+# =============================
+na_map <- map_data("world", region = c("USA", "Canada", "Mexico"))
+
+ggplot() +
+  geom_polygon(data = na_map, aes(x = long, y = lat, group = group),
+               fill = "gray90", color = "gray50") +
+  geom_point(data = all_occ, aes(x = longitude, y = latitude, colour = Species), size = 1) +
+  coord_fixed(1.3, xlim = c(-130, -60), ylim = c(20, 55)) +
+  theme_minimal() +
+  labs(title = "Occurrences of *Asclepias speciosa*")
+
+```
+
+```{r}
+# =============================
+# Download only once – slow!
+# =============================
+# clim_all <- worldclim_global(var = "bio", res = 2.5, path = "climate_data")
+
+# Set the path to the folder that contains all the .tif files
+clim_dir <- "/Users/colsonmanning/Dropbox/Carrie/Augustana/Teaching/S25/climate_data/climate/wc2.1_2.5m"
+
+# Load all .tif files as a SpatRaster stack
+clim_all <- rast(list.files(clim_dir, pattern = ".tif$", full.names = TRUE))
+
+# Check what's loaded
+clim_all
+
+
+# Select just a few variables (e.g., BIO1 and BIO12)
+#clim <- clim_all[[c("bio1", "bio12")]]
+
+```
+
+#### Variable Selection
+```{r}
+clim_dir <- "/Users/colsonmanning/Dropbox/Carrie/Augustana/Teaching/S25/climate_data/climate/wc2.1_2.5m"
+clim_all <- rast(list.files(clim_dir, pattern = ".tif$", full.names = TRUE))
+names(clim_all) <- paste0("bio", 1:nlyr(clim_all))  # Make sure names are clean
+# Sample 10,000 random points from raster
+sample_points <- spatSample(clim_all, size = 10000, method = "random", na.rm = TRUE)
+# Convert to data frame
+env_df <- as.data.frame(sample_points)
+```
+
+```{r}
+vif_result <- vif(env_df)
+# View result
+print(vif_result)
+# To exclude variables with high VIF (default threshold is 3)
+### Choose 3 as threshold
+vif_selected <- vifstep(env_df, th = 3)
+# View kept variables
+vif_selected@results
+```
+
+#### Do analysis on selected variables
+```{r}
+# List of selected variable names
+selected_vars <- c("bio6", "bio7", "bio10", "bio11", "bio12", "bio18", "bio19")
+
+# Subset the raster stack
+clim_selected <- clim_all[[selected_vars]]
+
+# Check
+clim_selected
+```
+
+```{r}
+occ_coords1 <- crds(occ_vect1)
+clim_raster1 <- stack(clim_selected)  # from terra SpatRaster to raster RasterStack
+bc_model1 <- bioclim(clim_raster1, occ_coords1)
+# =============================
+# Predict suitability across space
+# =============================
+pred1 <- predict(clim_selected, bc_model1)
+
+occ_coords2 <- crds(occ_vect2)
+clim_raster2 <- stack(clim_selected)  # from terra SpatRaster to raster RasterStack
+bc_model2 <- bioclim(clim_raster2, occ_coords2)
+# =============================
+# Predict suitability across space
+# =============================
+pred2 <- predict(clim_selected, bc_model2)
+
+```
+
+
+```{r}
+# Convert each raster to a data frame
+df1 <- as.data.frame(pred1, xy = TRUE)
+df2 <- as.data.frame(pred2, xy = TRUE)
+
+# Rename for clarity
+names(df1)[3] <- "Species_A"
+names(df2)[3] <- "Species_B"
+
+# Merge on coordinates
+merged <- merge(df1, df2, by = c("x", "y"))
+
+
+na_map <- map_data("world", region = c("USA", "Canada", "Mexico"))
+
+
+# Filter to North America bounds
+merged_na <- merged %>%
+  dplyr::filter(x > -130, x < -60, y > 20, y < 60)
+
+# Plot
+ggplot() +
+  # Add map outline underneath
+  geom_polygon(data = na_map, aes(x = long, y = lat, group = group),
+               fill = NA, color = "gray40", size = 0.3) +
+
+  # First raster layer
+  geom_raster(data = merged_na, aes(x = x, y = y, fill = Species_A), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "blue", name = "Species A") +
+
+  new_scale_fill() +  # reset fill scale
+
+  # Second raster layer
+  geom_raster(data = merged_na, aes(x = x, y = y, fill = Species_B), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "red", name = "Species B") +
+
+  coord_fixed(xlim = c(-130, -60), ylim = c(20, 60)) +
+  theme_minimal() +
+  labs(title = "Bioclimatic Suitability for Two Species")
+
+ggplot() +
+  geom_map(data = na_map, map = na_map,
+           aes(x = long, y = lat, map_id = region),
+           color = "black", fill = NA, linewidth = 0.3) +
+  coord_fixed(xlim = c(-130, -60), ylim = c(20, 55), expand = FALSE) +
+  theme_minimal()
+
+# Plot both using semi-transparent layers
+ggplot(merged) +
+  geom_raster(aes(x = x, y = y, fill = Species_A), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "blue", name = "Species A") +
+  new_scale_fill() +  # requires ggh4x or ggnewscale
+  geom_raster(aes(x = x, y = y, fill = Species_B), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "red", name = "Species B") +
+  coord_fixed() +
+  theme_minimal() +
+  labs(title = "Suitability Maps for Two Species")
+
+
+us_states <- map_data("state")
+
+ggplot() +
+  geom_polygon(data = us_states, aes(x = long, y = lat, group = group),
+               fill = NA, color = "gray40", linewidth = 0.3) +
+  coord_fixed(xlim = c(-130, -60), ylim = c(20, 55), expand = FALSE) +
+  theme_minimal()
+
+```
+
+
+
+
+
+
+##### No variable selection
+```{r}
+
+# =============================
+# Convert occurrences to spatial points
+# =============================
+occ_vect1 <- vect(occ1, geom = c("longitude", "latitude"), crs = "EPSG:4326")
+occ_vect2 <- vect(occ2, geom = c("longitude", "latitude"), crs = "EPSG:4326")
+# =============================
+# Fit the Bioclim model
+# =============================
+occ_coords1 <- crds(occ_vect1)
+clim_raster1 <- stack(clim_all)  # from terra SpatRaster to raster RasterStack
+bc_model1 <- bioclim(clim_raster1, occ_coords1)
+# =============================
+# Predict suitability across space
+# =============================
+pred1 <- predict(clim_all, bc_model1)
+
+occ_coords2 <- crds(occ_vect2)
+clim_raster2 <- stack(clim_all)  # from terra SpatRaster to raster RasterStack
+bc_model2 <- bioclim(clim_raster2, occ_coords2)
+# =============================
+# Predict suitability across space
+# =============================
+pred2 <- predict(clim_all, bc_model2)
+
+```
+
+```{r}
+# Convert each raster to a data frame
+df1 <- as.data.frame(pred1, xy = TRUE)
+df2 <- as.data.frame(pred2, xy = TRUE)
+
+# Rename for clarity
+names(df1)[3] <- "Species_A"
+names(df2)[3] <- "Species_B"
+
+# Merge on coordinates
+merged <- merge(df1, df2, by = c("x", "y"))
+
+
+na_map <- map_data("world", region = c("USA", "Canada", "Mexico"))
+
+
+# Filter to North America bounds
+merged_na <- merged %>%
+  dplyr::filter(x > -130, x < -60, y > 20, y < 60)
+
+# Plot
+ggplot() +
+  # Add map outline underneath
+  geom_polygon(data = na_map, aes(x = long, y = lat, group = group),
+               fill = NA, color = "gray40", size = 0.3) +
+
+  # First raster layer
+  geom_raster(data = merged_na, aes(x = x, y = y, fill = Species_A), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "blue", name = "Species A") +
+
+  new_scale_fill() +  # reset fill scale
+
+  # Second raster layer
+  geom_raster(data = merged_na, aes(x = x, y = y, fill = Species_B), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "red", name = "Species B") +
+
+  coord_fixed(xlim = c(-130, -60), ylim = c(20, 60)) +
+  theme_minimal() +
+  labs(title = "Bioclimatic Suitability for Two Species")
+
+
+# Plot both using semi-transparent layers
+ggplot(merged) +
+  geom_raster(aes(x = x, y = y, fill = Species_A), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "blue", name = "Species A") +
+  new_scale_fill() +  # requires ggh4x or ggnewscale
+  geom_raster(aes(x = x, y = y, fill = Species_B), alpha = 0.6) +
+  scale_fill_gradient(low = "white", high = "red", name = "Species B") +
+  coord_fixed() +
+  theme_minimal() +
+  labs(title = "Suitability Maps for Two Species")
+
+```
+
+
+
+
+Repeat with only selected variables
+
+
+
+
+
+
+
+
+
+
+
+### These only map the overlap
+```{r}
+# Convert to binary: 1 = suitable, 0 = not
+pred1_bin <- pred1 > 0.5
+pred2_bin <- pred2 > 0.5
+
+# Combine: 0 = neither, 1 = only A, 2 = only B, 3 = both
+overlap <- pred1_bin + pred2_bin * 2
+
+# Plot with a custom legend
+plot(overlap, col = c("white", "blue", "red", "purple"),
+     legend = FALSE, main = "Suitability Overlap")
+legend("bottomleft", legend = c("None", "Species A", "Species B", "Both"),
+       fill = c("white", "blue", "red", "purple"))
+
+```
+
+
+
+```{r}
+# Convert rasters to data frames
+library(raster)
+library(ggplot2)
+
+df1 <- as.data.frame(pred1, xy = TRUE)
+df2 <- as.data.frame(pred2, xy = TRUE)
+
+# Rename for clarity
+names(df1)[3] <- "Suitability_A"
+names(df2)[3] <- "Suitability_B"
+
+# Merge on coordinates
+merged <- merge(df1, df2, by = c("x", "y"))
+
+# Plot using ggplot2
+ggplot(merged) +
+  geom_raster(aes(x = x, y = y, fill = Suitability_A), alpha = 0.5) +
+  geom_raster(aes(x = x, y = y, fill = Suitability_B), alpha = 0.5) +
+  scale_fill_gradient(low = "white", high = "darkgreen") +
+  coord_fixed() +
+  theme_minimal() +
+  labs(title = "Bioclimatic Suitability for Two Species")
+
+```
+
+
+
+```{r}
+
+# =============================
+# Plot the prediction
+# =============================
+plot(pred, main = "Bioclimatic Suitability")
+#points(occ_coords, pch = 16, col = "blue")
+
+# =============================
+# Summarize which variables define the niche
+# =============================
+summary(bc_model)
+
+
+```
+
+Thinned data
+```{r}
+# Convert occurrence points to raster cells
+cell_ids <- cellFromXY(clim_raster, occ_coords)
+
+# Keep only one occurrence per cell
+unique_cells <- !duplicated(cell_ids)
+occ_thinned <- occ[unique_cells, ]
+
+# Use these for your model
+occ_vect <- vect(occ_thinned, geom = c("longitude", "latitude"), crs = "EPSG:4326")
+occ_coords <- crds(occ_vect)
+bc_model <- bioclim(clim_raster, occ_coords)
+
+pred <- predict(clim_all, bc_model)
+
+# =============================
+# Plot the prediction
+# =============================
+plot(pred, main = "Bioclimatic Suitability")
+
+```
+
+```{r}
+#install.packages("spThin")
+library(spThin)
+occ <- read.csv("Asclepias_syriaca_GBIF.csv")  # Must include 'longitude' and 'latitude'
+# Thin by minimum distance (e.g., 10 km)
+thin_results <- thin(
+  loc.data = occ,
+  lat.col = "latitude",
+  long.col = "longitude",
+  spec.col = "Species",         # Add this column if it's missing
+  thin.par = 10,                # Minimum distance in km
+  reps = 1,                     # Number of replicates
+  write.files = FALSE,
+  verbose = FALSE
+)
+
+# Extract thinned data
+occ_thinned <- thin_results[[1]]
+
+# Use these for your model
+occ_vect <- vect(occ_thinned, geom = c("longitude", "latitude"), crs = "EPSG:4326")
+occ_coords <- crds(occ_vect)
+bc_model <- bioclim(clim_raster, occ_coords)
+
+pred <- predict(clim_all, bc_model)
+
+# =============================
+# Plot the prediction
+# =============================
+plot(pred, main = "Bioclimatic Suitability")
+
+```
+
+
+
+
+
+```{r}
+# Download a country boundary if desired
+usa <- geodata::gadm(country = "USA", level = 1, path = "gadm_data")
+pred_crop <- mask(crop(pred, usa), usa)
+plot(pred_crop)
+writeRaster(pred, "bioclim_suitability_asyr.tif", overwrite = TRUE)
+```
+

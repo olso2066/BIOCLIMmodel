@@ -1,0 +1,92 @@
+#OnEnvelope,City State,latitude,longitude,Order,Sequenced_Experiment,PercentSyriacaAncestry,Species
+270,Seattle WA,47.6062,-122.3321,1,Skim23,0,Speciosa
+19,Ada County ID,43.515665,-116.34767,2,Skim23,0,Speciosa
+165,Hamilton MT,46.2260038,-114.095446,3,Skim23,0,Speciosa
+166,Lola MT,46.727621,-114.079562,4,Andreev et al.,0,Speciosa
+168,Twin Bridges MT 2,45.3896,-112.4531,5,Skim23,0,Speciosa
+268,Logan UT,41.739,-111.839,6,Skim23,0,Speciosa
+298,Boulder CO,40.014986,-105.270546,7,Andreev et al.,0,Speciosa
+1,Boulder CO 1,40.014986,-105.2700546,8,Skim23,0,Speciosa
+6,Niwot CO,40.0857,-105.22488,9,Skim23,0,Speciosa
+5,Longmont CO,40.193851,-105.151405,10,Skim23,0,Speciosa
+3,Fort Collins CO 1,40.5578,-105.1011,11,Skim23,0,Speciosa
+224,McNenny SD,44.550648,-104.009709,12,Andreev et al.,0,Speciosa
+274,Aladdin WY,44.554079,-104.00687,13,Skim23,0,Speciosa
+266,Wind National Cave SD,43.4955,-103.4595,14,Skim23,0,Speciosa
+176,Dickinson ND ,46.8825,-102.8004,15,Skim23,0,Speciosa
+244,Sheriff Dam 6,44.108081,-100.423697,22,Andreev et al.,0,Speciosa
+43,Stafford CO. KS 1,38.0749,-98.7481,30,Skim23,0,Speciosa
+48,Hudson KS 1,38.185225,-98.539551,32,Skim23,0,Speciosa
+171,Bismark ND 2,46.82052,-100.74793,20,Skim23,0.12,Hybrid
+243,Sheriff Dam 4,44.108081,-100.423697,23,Andreev et al.,0.23,Hybrid
+13,UNGH4xUNGH2,,,,Skim23,0.25,Hybrid
+174,Bismark ND 5,46.84596,-100.75216,19,Skim23,0.334,Hybrid
+190,Cherry County NE 3,42.96177,-100.25752,27,Skim23,0.43,Hybrid
+226,Pickerel Lake SD 1,45.5042,-97.2727,44,Skim23,0.5,Hybrid
+188,Cherry County NE 1,42.96177,-100.25752,28,Skim23,0.57,Hybrid
+228,Pierre Grasslands Loc 1 #1,44.148992,-100.409486,26,Andreev et al.,0.61,Hybrid
+10,MCN2-14xMak2-16,,,,Skim23,0.61,Hybrid
+11,PP-18xCox1-4,,,,Skim23,0.62,Hybrid
+177,Fort Rice ND,46.868673,-101.094407,16,Skim23,0.65,Hybrid
+179,Hastings ND 1,46.68659,-98.06079,35,Andreev et al.,0.65,Hybrid
+189,Cherry County NE 2,42.96177,-100.25752,29,Skim23,0.71,Hybrid
+245,Sheriff Dam 7,44.108081,-100.423697,24,Andreev et al.,0.76,Hybrid
+210,Clark SD 2,44.479,-97.614,41,Skim23,0.76,Hybrid
+173,Bismark ND 4,46.74006,-100.78065,18,Skim23,0.77,Hybrid
+246,Sheriff Dam 8,44.108081,-100.423697,25,Andreev et al.,0.78,Hybrid
+265,Wilmot SD,45.444,-96.862,51,Skim23,0.78,Hybrid
+261,Watertown SD 2,44.8727,-97.1764,45,Skim23,0.8,Hybrid
+219,Labolt SD 1,45.121,-96.67,55,Skim23,0.8,Hybrid
+216,Henry SD 1,44.847,-97.378,43,Andreev et al.,0.83,Hybrid
+59,Buffalo River Parking Lot MN,46.8656,-96.4689,57,Andreev et al.,0.83,Hybrid
+240,Sheriff Dam 1,44.118263,-100.423751,21,Skim23,0.85,Hybrid
+178,Grand Forks ND,47.922828,-97.023821,46,Skim23,0.85,Hybrid
+136,Titze Farm,43.570974,-98.49198,33,Andreev et al.,0.91,Hybrid
+54,Blue Mounds South,43.690843,-96.19748,59,Andreev et al.,0.92,Hybrid
+123,Road to Iron Springs,47.251905,-95.241708,62,Andreev et al.,0.92,Hybrid
+223,Makoce SD,43.55339,-96.968503,47,Andreev et al.,0.96,Hybrid
+53,Blue Mounds North,43.714682,-96.182733,60,Andreev et al.,0.97,Hybrid
+184,Mandan ND,46.764735,-100.848193,17,Skim23,0.98,Hybrid
+256,Strandburg SD,45.0441,-96.7606,53,Skim23,0.98,Syriaca
+23,Downer's Grove IL,41.7939,-88.0042,85,Andreev et al.,0.98,Syriaca
+209,Clark SD 1,45.123,-97.543,42,Skim23,0.99,Syriaca
+251,Sisseton SD 5,45.398,-96.673,54,Skim23,0.99,Syriaca
+200,Ithaca NY,42.4187,-76.522,87,Andreev et al.,0.99,Syriaca
+45,Stafford CO. KS 3,38.0749,-98.7481,31,Andreev et al.,1,Syriaca
+94,Matzner Farm ,43.564775,-98.479752,34,Skim23,1,Syriaca
+191,Lincoln NE 1,41.025969,-98.040002,36,Skim23,1,Syriaca
+192,Lincoln NE 2,41.025969,-98.040002,37,Skim23,1,Syriaca
+135,Stillwater MN,45.127,-97.765,38,Skim23,1,Syriaca
+257,Vienna SD 1,44.761,-97.715,39,Skim23,1,Syriaca
+40,Minneapolis KS,39.120314,-97.701249,40,Skim23,1,Syriaca
+222,Makoce SD,43.55088,-96.968411,48,Skim23,1,Syriaca
+221,Makoce SD,43.553251,-96.96733,49,Skim23,1,Syriaca
+31,Junction City KS 2,39.073478,-96.875175,50,Skim23,1,Syriaca
+185,Fargo ND,46.865963,-96.801942,52,Skim23,1,Syriaca
+36,Manhattan KS 1,39.064903,-96.617325,56,Skim23,1,Syriaca
+47,Wamego KS 2,39.14745,-96.296708,58,Skim23,1,Syriaca
+103,N Small Slough OF_4,46.857528,-96.180922,61,Skim23,1,Syriaca
+42,Olathe KS,38.8811,-94.8909,63,Skim23,1,Syriaca
+151,Kansas City MO 2,39.25672,-94.557623,64,Skim23,1,Syriaca
+150,Kansas City MO 1,39.240324,-94.548436,65,Skim23,1,Syriaca
+112,North Mankato MN,44.1733,-94.0338,66,Skim23,1,Syriaca
+92,Mankato MN,44.228333,-93.9588,67,Skim23,1,Syriaca
+93,Mankato MN,44.210737,-93.952438,68,Skim23,1,Syriaca
+82,Hassan Township MN 1,45.180261,-93.634713,69,Andreev et al.,1,Syriaca
+16,Ames IA 2,42.09222,-93.59123,70,Skim23,1,Syriaca
+97,Medina MN,45.057981,-93.523776,71,Andreev et al.,1,Syriaca
+156,Pettis CO. MO 2,38.53022715,-93.50920614,72,Skim23,1,Syriaca
+104,Nerstrand MN,44.345087,-93.173538,73,Skim23,1,Syriaca
+116,Northfield MN,44.4544,-93.1618,74,Skim23,1,Syriaca
+118,Northfield MN,44.471657,-93.140084,75,Skim23,1,Syriaca
+149,Hallsville MO,39.096975,-92.354341,76,Skim23,1,Syriaca
+139,Columbia MO,38.939396,-92.336952,77,Skim23,1,Syriaca
+143,Columbia MO,38.92623,-92.33131,78,Skim23,1,Syriaca
+50,Aurora MN,47.54114,-92.25607,79,Skim23,1,Syriaca
+141,Columbia MO,38.812592,-92.143829,80,Skim23,1,Syriaca
+153,Montgomery City MO 1,38.924329,-91.542306,81,Skim23,1,Syriaca
+152,Marthasville MO,38.6284,-91.0576,82,Skim23,1,Syriaca
+145,Cottleville MO,38.7481,-90.6512,83,Skim23,1,Syriaca
+160,St. Louis MO 1,38.375451,-90.227612,84,Skim23,1,Syriaca
+169,East Bend NC,36.4954,-80.4955,86,Skim23,1,Syriaca
+12,PP-18xMak2-20,,,,Skim23,1,Syriaca
