@@ -20,37 +20,38 @@ library(terra)
 library(elevatr)
 library(sp)
 
-coordinates(occ_data) <- ~longitude+latitude
-proj4string(occ_data) <- CRS("+proj=longlat +datum=WGS84")
-elev <- get_elev_point(locations = occ_data, src = "aws")
-occ_data$elevation <- elev@data$elevation
+# ~/Dropbox/github_repositories/BIOCLIMmodel/BIOCLIM_full.Rmd
+#occ_data <- read.csv("Asclepias_syriaca_GBIF.csv")  # Must include 'longitude' and 'latitude'
+#occ_data <- rename(occ_data, longitude = longitude, latitude = latitude)  # if needed
+occ1 <- read.csv("Asclepias_syriaca_GBIF.csv")  # Must include 'longitude' and 'latitude'
+occ2 <- read.csv("")  # Must include 'longitude' and 'latitude'
+#occ3 <- read.csv("confirmed_hybrids.csv")
 
 # =============================
 # Load your GPS occurrence data
 # =============================
-occ1 <- read.csv("Asclepias_syriaca_GBIF.csv")  # Must include 'longitude' and 'latitude'
-occ2 <- read.csv("Asclepias_speciosa_GBIF.csv")  # Must include 'longitude' and 'latitude'
-occ3 <- read.csv("confirmed_hybrids.csv")
+
 
 # Optional: Check column names and rename if necessary
 # names(occ)
 occ1 <- rename(occ1, longitude = longitude, latitude = latitude)  # if needed
 occ2 <- rename(occ2, longitude = longitude, latitude = latitude)  # if needed
-
 all_occ <- rbind(occ1,occ2)
 
 # =============================
 # Map the distribution of occurrences
 # =============================
+data_to_plot <- occ_data
+
 na_map <- map_data("world", region = c("USA", "Canada", "Mexico"))
 
 ggplot() +
   geom_polygon(data = na_map, aes(x = long, y = lat, group = group),
                fill = "gray90", color = "gray50") +
-  geom_point(data = all_occ, aes(x = longitude, y = latitude, colour = Species), size = 1) +
+  geom_point(data = data_to_plot, aes(x = longitude, y = latitude, colour = Species), size = 1) +
   coord_fixed(1.3, xlim = c(-130, -60), ylim = c(20, 55)) +
   theme_minimal() +
-  labs(title = "Occurrences of *Asclepias speciosa*")
+  labs(title = "Occurrences")
 
 ```
 
